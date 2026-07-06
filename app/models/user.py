@@ -1,7 +1,10 @@
+import uuid
+
 from sqlalchemy import Boolean
 from sqlalchemy import Enum
-from sqlalchemy import Integer
 from sqlalchemy import String
+
+from sqlalchemy.dialects.postgresql import UUID
 
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -14,35 +17,41 @@ class User(Base):
 
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(
-        Integer,
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
         primary_key=True,
-        index=True
+        default=uuid.uuid4,
     )
 
-    name: Mapped[str] = mapped_column(
+    full_name: Mapped[str] = mapped_column(
         String(100),
-        nullable=False
+        nullable=False,
     )
 
     email: Mapped[str] = mapped_column(
         String(150),
         unique=True,
+        nullable=False,
         index=True,
-        nullable=False
     )
 
-    password: Mapped[str] = mapped_column(
+    hashed_password: Mapped[str] = mapped_column(
         String(255),
-        nullable=False
+        nullable=False,
     )
 
     role: Mapped[UserRole] = mapped_column(
         Enum(UserRole),
-        nullable=False
+        nullable=False,
+        default=UserRole.STUDENT,
     )
 
     is_active: Mapped[bool] = mapped_column(
         Boolean,
-        default=True
+        default=True,
+    )
+
+    is_verified: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
     )

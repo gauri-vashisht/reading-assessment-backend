@@ -1,53 +1,84 @@
 from sqlalchemy.orm import Session
 
-from app.models.user import User
-from app.schemas.user import UserCreate
 from app.core.security import (
+    create_access_token,
     hash_password,
     verify_password,
-    create_access_token,
+)
+
+from app.models.user import User
+from app.repositories.user_repository import user_repository
+from app.schemas.user import (
+    UserCreate,
+    UserLogin,
 )
 
 
-def register_user(db: Session, user: UserCreate):
-    # Check if email already exists
-    existing_user = db.query(User).filter(User.email == user.email).first()
+class AuthService:
 
-    if existing_user:
-        return None
+    def register(
+        self,
+        db: Session,
+        user_data: UserCreate,
+    ):
 
-    new_user = User(
-        name=user.name,
-        email=user.email,
-        password=hash_password(user.password),
-        role=user.role,
-    )
+        existing = user_repository.get_by_email(
+            db,
+            user_data.email,
+        )
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+        if existing:
+            raise ValueError(
+                "Email already exists."
+            )
 
-    return new_user
+        user = User(
+            full_name=user_data.full_name,
+            email=user_data.email,
+            hashed_password=hash_password(
+                user_data.password
+            ),
+            role=user_data.role,
+        )
 
+        return user_repository.create(
+            db,
+            user,
+        )
 
-def login_user(db: Session, email: str, password: str):
-    user = db.query(User).filter(User.email == email).first()
+    def login(
+        self,
+        db: Session,
+        credentials: UserLogin,
+    ):
 
-    if not user:
-        return None
+        user = user_repository.get_by_email(
+            db,
+            credentials.email,
+        )
 
-    if not verify_password(password, user.password):
-        return None
+        if user is None:
+            raise ValueError(
+                "Invalid credentials."
+            )
 
-    token = create_access_token(
-        {
-            "sub": user.email,
-            "role": user.role,
-            "id": user.id,
+        if not verify_password(
+            credentials.password,
+            user.hashed_password,
+        ):
+            raise ValueError(
+                "Invalid credentials."
+            )
+
+        token = create_access_token(
+            subject=str(user.id),
+            role=user.role.value,
+        )
+
+        return {
+            "access_token": token,
+            "token_type": "bearer",
         }
-    )
 
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-    }
+
+auth_service = AuthService()

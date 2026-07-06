@@ -1,17 +1,28 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import EmailStr
+from pydantic import Field
+
+from app.enums.user_role import UserRole
 
 
 class UserCreate(BaseModel):
 
-    name: str
+    full_name: str = Field(
+        min_length=2,
+        max_length=100,
+    )
 
     email: EmailStr
 
-    password: str
+    password: str = Field(
+        min_length=8,
+        max_length=100,
+    )
 
-    role: str
+    role: UserRole = UserRole.STUDENT
 
 
 class UserLogin(BaseModel):
@@ -23,15 +34,17 @@ class UserLogin(BaseModel):
 
 class UserResponse(BaseModel):
 
-    id: int
+    id: UUID
 
-    name: str
+    full_name: str
 
     email: EmailStr
 
-    role: str
+    role: UserRole
 
     is_active: bool
+
+    is_verified: bool
 
     model_config = ConfigDict(
         from_attributes=True
