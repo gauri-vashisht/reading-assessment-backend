@@ -1,33 +1,12 @@
-from fastapi import FastAPI
+from contextlib import asynccontextmanager
 
+from fastapi import FastAPI
+from loguru import logger
+
+from app.api.auth import router as auth_router
+from app.api.health import router as health_router
 from app.core.config import settings
 from app.exceptions.handlers import global_exception_handler
-
-
-
-app = FastAPI(
-    title=settings.APP_NAME,
-    version=settings.APP_VERSION
-)
-
-app.add_exception_handler(
-    Exception,
-    global_exception_handler
-)
-
-
-@app.get("/")
-def root():
-
-    return {
-        "status": "Running"
-    }
-
-from app.api.health import router as health_router
-app.include_router(health_router)
-
-from contextlib import asynccontextmanager
-from loguru import logger
 
 
 @asynccontextmanager
@@ -43,5 +22,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-from app.api.auth import router as auth_router
+app.add_exception_handler(
+    Exception,
+    global_exception_handler,
+)
+
+app.include_router(health_router)
 app.include_router(auth_router)
+
+
+@app.get("/", tags=["Root"])
+def root():
+    return {
+        "status": "Running",
+        "application": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+    }

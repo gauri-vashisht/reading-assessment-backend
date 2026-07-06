@@ -13,7 +13,9 @@ from app.database.base import Base
 from app.models.enums import UserRole
 
 
-class User(Base):
+from app.models.mixins import TimestampMixin
+
+class User(Base, TimestampMixin):
 
     __tablename__ = "users"
 

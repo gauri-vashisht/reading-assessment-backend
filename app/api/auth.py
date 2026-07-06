@@ -1,11 +1,14 @@
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.database.session import get_db
-from app.schemas.user import UserCreate
-from app.schemas.user import UserLogin
+from app.dependencies.auth import get_current_user
+from app.dependencies.database import DBSession
+from app.models.user import User
+from app.schemas.auth import LoginResponse
+from app.schemas.user import (
+    UserCreate,
+    UserLogin,
+    UserResponse,
+)
 from app.services.auth_service import auth_service
 
 router = APIRouter(
@@ -14,39 +17,63 @@ router = APIRouter(
 )
 
 
-@router.post("/register")
+@router.post(
+    "/register",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 def register(
     user: UserCreate,
-    db: Session = Depends(get_db),
+    db: DBSession,
 ):
 
     try:
-        return auth_service.register(
+
+        created_user = auth_service.register(
             db,
             user,
         )
 
-    except ValueError as e:
+        return UserResponse.model_validate(created_user)
+
+    except ValueError as exc:
+
         raise HTTPException(
-            status_code=400,
-            detail=str(e),
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
         )
 
 
-@router.post("/login")
+@router.post(
+    "/login",
+    response_model=LoginResponse,
+)
 def login(
     credentials: UserLogin,
-    db: Session = Depends(get_db),
+    db: DBSession,
 ):
 
     try:
+
         return auth_service.login(
             db,
             credentials,
         )
 
-    except ValueError as e:
+    except ValueError as exc:
+
         raise HTTPException(
-            status_code=401,
-            detail=str(e),
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(exc),
         )
+
+
+@router.get(
+    "/me",
+    response_model=UserResponse,
+)
+def me(
+    current_user: User = Depends(get_current_user),
+):
+
+    return UserResponse.model_validate(current_user)

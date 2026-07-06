@@ -5,9 +5,12 @@ from app.models.user import User
 from app.repositories.base_repository import BaseRepository
 
 
-class UserRepository(BaseRepository[User]):
+class UserRepository(
+    BaseRepository[User]
+):
 
     def __init__(self):
+
         super().__init__(User)
 
     def get_by_email(
@@ -22,6 +25,18 @@ class UserRepository(BaseRepository[User]):
         )
 
         return db.scalar(stmt)
+
+    def update_last_login(
+        self,
+        db: Session,
+        user: User,
+    ) -> None:
+
+        from datetime import datetime, UTC
+
+        user.last_login = datetime.now(UTC)
+
+        db.commit()
 
 
 user_repository = UserRepository()

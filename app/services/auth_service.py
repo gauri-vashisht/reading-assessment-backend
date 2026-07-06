@@ -5,40 +5,37 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
-
 from app.models.user import User
 from app.repositories.user_repository import user_repository
+from app.schemas.auth import LoginResponse
 from app.schemas.user import (
     UserCreate,
     UserLogin,
+    UserResponse,
 )
-
+from app.exceptions.auth import InvalidCredentialsException 
 
 class AuthService:
 
     def register(
         self,
         db: Session,
-        user_data: UserCreate,
-    ):
+        data: UserCreate,
+    ) -> User:
 
         existing = user_repository.get_by_email(
             db,
-            user_data.email,
+            data.email,
         )
 
         if existing:
-            raise ValueError(
-                "Email already exists."
-            )
+            raise InvalidCredentialsException("Email already registered.")
 
         user = User(
-            full_name=user_data.full_name,
-            email=user_data.email,
-            hashed_password=hash_password(
-                user_data.password
-            ),
-            role=user_data.role,
+            full_name=data.full_name,
+            email=data.email,
+            hashed_password=hash_password(data.password),
+            role=data.role,
         )
 
         return user_repository.create(
@@ -50,7 +47,7 @@ class AuthService:
         self,
         db: Session,
         credentials: UserLogin,
-    ):
+    ) -> LoginResponse:
 
         user = user_repository.get_by_email(
             db,
@@ -58,27 +55,29 @@ class AuthService:
         )
 
         if user is None:
-            raise ValueError(
-                "Invalid credentials."
-            )
+            raise InvalidCredentialsException("Invalid email or password.")
 
         if not verify_password(
             credentials.password,
             user.hashed_password,
         ):
-            raise ValueError(
-                "Invalid credentials."
-            )
+            raise InvalidCredentialsException("Invalid email or password.")
+
+        user_repository.update_last_login(
+            db,
+            user,
+        )
 
         token = create_access_token(
             subject=str(user.id),
             role=user.role.value,
         )
 
-        return {
-            "access_token": token,
-            "token_type": "bearer",
-        }
+        return LoginResponse(
+            access_token=token,
+            token_type="bearer",
+            user=UserResponse.model_validate(user),
+        )
 
 
 auth_service = AuthService()

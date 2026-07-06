@@ -14,10 +14,16 @@ class BaseRepository(Generic[ModelType]):
     def __init__(self, model: type[ModelType]):
         self.model = model
 
-    def create(self, db: Session, obj: ModelType) -> ModelType:
+    def create(
+        self,
+        db: Session,
+        obj: ModelType,
+    ) -> ModelType:
+
         db.add(obj)
         db.commit()
         db.refresh(obj)
+
         return obj
 
     def get_by_id(
@@ -26,7 +32,9 @@ class BaseRepository(Generic[ModelType]):
         id: UUID,
     ) -> ModelType | None:
 
-        stmt = select(self.model).where(self.model.id == id)
+        stmt = select(self.model).where(
+            self.model.id == id
+        )
 
         return db.scalar(stmt)
 
@@ -37,14 +45,15 @@ class BaseRepository(Generic[ModelType]):
 
         stmt = select(self.model)
 
-        return list(db.scalars(stmt))
+        return list(
+            db.scalars(stmt)
+        )
 
     def delete(
         self,
         db: Session,
         obj: ModelType,
-    ):
+    ) -> None:
 
         db.delete(obj)
-
         db.commit()
