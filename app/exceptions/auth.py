@@ -1,5 +1,5 @@
 class AuthenticationException(Exception):
-    pass
+    """Base authentication exception."""
 
 
 class InvalidCredentialsException(AuthenticationException):
@@ -10,5 +10,13 @@ class UserAlreadyExistsException(AuthenticationException):
     pass
 
 
+class InvalidTokenException(AuthenticationException):
+    pass
+
+
 class UnauthorizedException(AuthenticationException):
+    pass
+
+
+class UserInactiveException(AuthenticationException):
     pass

@@ -21,7 +21,7 @@ class BaseRepository(Generic[ModelType]):
     ) -> ModelType:
 
         db.add(obj)
-        db.commit()
+        db.flush()
         db.refresh(obj)
 
         return obj
@@ -56,4 +56,4 @@ class BaseRepository(Generic[ModelType]):
     ) -> None:
 
         db.delete(obj)
-        db.commit()
+        db.flush()

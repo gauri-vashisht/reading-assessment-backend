@@ -5,6 +5,10 @@ from app.core.security import (
     hash_password,
     verify_password,
 )
+from app.exceptions.auth import (
+    InvalidCredentialsException,
+    UserAlreadyExistsException,
+)
 from app.models.user import User
 from app.repositories.user_repository import user_repository
 from app.schemas.auth import LoginResponse
@@ -13,7 +17,7 @@ from app.schemas.user import (
     UserLogin,
     UserResponse,
 )
-from app.exceptions.auth import InvalidCredentialsException 
+
 
 class AuthService:
 
@@ -29,7 +33,9 @@ class AuthService:
         )
 
         if existing:
-            raise InvalidCredentialsException("Email already registered.")
+            raise UserAlreadyExistsException(
+                "Email already registered."
+            )
 
         user = User(
             full_name=data.full_name,
@@ -38,10 +44,20 @@ class AuthService:
             role=data.role,
         )
 
-        return user_repository.create(
-            db,
-            user,
-        )
+        try:
+            user = user_repository.create(
+                db,
+                user,
+            )
+
+            db.commit()
+            db.refresh(user)
+
+            return user
+
+        except Exception:
+            db.rollback()
+            raise
 
     def login(
         self,
@@ -55,18 +71,29 @@ class AuthService:
         )
 
         if user is None:
-            raise InvalidCredentialsException("Invalid email or password.")
+            raise InvalidCredentialsException(
+                "Invalid email or password."
+            )
 
         if not verify_password(
             credentials.password,
             user.hashed_password,
         ):
-            raise InvalidCredentialsException("Invalid email or password.")
+            raise InvalidCredentialsException(
+                "Invalid email or password."
+            )
 
-        user_repository.update_last_login(
-            db,
-            user,
-        )
+        try:
+            user_repository.update_last_login(
+                db,
+                user,
+            )
+
+            db.commit()
+
+        except Exception:
+            db.rollback()
+            raise
 
         token = create_access_token(
             subject=str(user.id),

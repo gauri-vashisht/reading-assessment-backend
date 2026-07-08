@@ -36,7 +36,7 @@ class UserRepository(
 
         user.last_login = datetime.now(UTC)
 
-        db.commit()
+        db.flush()
 
 
 user_repository = UserRepository()

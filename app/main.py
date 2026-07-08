@@ -22,11 +22,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_exception_handler(
-    Exception,
-    global_exception_handler,
-)
-
 app.include_router(health_router)
 app.include_router(auth_router)
 
@@ -38,3 +33,18 @@ def root():
         "application": settings.APP_NAME,
         "version": settings.APP_VERSION,
     }
+
+from app.exceptions.auth import AuthenticationException
+from app.exceptions.handlers import (
+    authentication_exception_handler,
+    global_exception_handler,
+)
+app.add_exception_handler(
+    AuthenticationException,
+    authentication_exception_handler,
+)
+
+app.add_exception_handler(
+    Exception,
+    global_exception_handler,
+)
