@@ -11,6 +11,7 @@ from app.api.schools import router as school_router
 from app.api.academic_years import (
     router as academic_year_router,
 )
+from app.api.classrooms import router as classroom_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -32,6 +33,7 @@ app.include_router(school_router)
 app.include_router(
     academic_year_router
 )
+app.include_router(classroom_router)
 
 @app.get("/", tags=["Root"])
 def root():
@@ -55,3 +57,6 @@ app.add_exception_handler(
     Exception,
     global_exception_handler,
 )
+
+
+

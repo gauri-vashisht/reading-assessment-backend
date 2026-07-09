@@ -41,3 +41,9 @@ class AcademicYear(Base, UUIDMixin, TimestampMixin):
         "School",
         back_populates="academic_years",
     )
+
+    classrooms = relationship(
+    "Classroom",
+    back_populates="academic_year",
+    cascade="all, delete-orphan",
+    )

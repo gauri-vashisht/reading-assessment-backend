@@ -6,8 +6,7 @@ from sqlalchemy import String
 
 from sqlalchemy.dialects.postgresql import UUID
 
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 from app.models.enums import UserRole
@@ -57,3 +56,9 @@ class User(Base, TimestampMixin):
         Boolean,
         default=False,
     )
+
+teacher_profile = relationship(
+    "TeacherProfile",
+    back_populates="user",
+    uselist=False,
+)    
