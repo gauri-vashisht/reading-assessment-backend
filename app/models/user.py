@@ -57,8 +57,9 @@ class User(Base, TimestampMixin):
         default=False,
     )
 
-teacher_profile = relationship(
-    "TeacherProfile",
-    back_populates="user",
-    uselist=False,
-)    
+
+    teacher_profile = relationship(
+        "TeacherProfile",
+        back_populates="user",
+        uselist=False,
+    )    

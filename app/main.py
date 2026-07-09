@@ -12,6 +12,11 @@ from app.api.academic_years import (
     router as academic_year_router,
 )
 from app.api.classrooms import router as classroom_router
+from app.api.teacher_profiles import (
+    router as teacher_profile_router,
+)
+
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -34,6 +39,9 @@ app.include_router(
     academic_year_router
 )
 app.include_router(classroom_router)
+app.include_router(
+    teacher_profile_router,
+)
 
 @app.get("/", tags=["Root"])
 def root():
