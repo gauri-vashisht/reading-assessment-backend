@@ -6,8 +6,11 @@ from loguru import logger
 from app.api.auth import router as auth_router
 from app.api.health import router as health_router
 from app.core.config import settings
-from app.exceptions.handlers import global_exception_handler
 
+from app.api.schools import router as school_router
+from app.api.academic_years import (
+    router as academic_year_router,
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,9 +25,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
 app.include_router(health_router)
 app.include_router(auth_router)
-
+app.include_router(school_router)
+app.include_router(
+    academic_year_router
+)
 
 @app.get("/", tags=["Root"])
 def root():
