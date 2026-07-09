@@ -69,3 +69,9 @@ class Classroom(Base, UUIDMixin, TimestampMixin):
     "TeacherProfile",
     back_populates="classroom",
     )
+
+    students = relationship(
+    "StudentProfile",
+    back_populates="classroom",
+    cascade="all, delete-orphan",
+    )

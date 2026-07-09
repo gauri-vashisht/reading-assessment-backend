@@ -15,6 +15,9 @@ from app.api.classrooms import router as classroom_router
 from app.api.teacher_profiles import (
     router as teacher_profile_router,
 )
+from app.api.student_profiles import (
+    router as student_profile_router,
+)
 
 
 
@@ -42,7 +45,9 @@ app.include_router(classroom_router)
 app.include_router(
     teacher_profile_router,
 )
-
+app.include_router(
+    student_profile_router,
+)
 @app.get("/", tags=["Root"])
 def root():
     return {

@@ -63,3 +63,9 @@ class User(Base, TimestampMixin):
         back_populates="user",
         uselist=False,
     )    
+
+    student_profile = relationship(
+    "StudentProfile",
+    back_populates="user",
+    uselist=False,
+    )
