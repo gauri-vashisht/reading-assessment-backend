@@ -77,3 +77,13 @@ class User(Base, TimestampMixin):
     cascade="all, delete-orphan",
     )
 
+    assigned_reading_assignments = relationship(
+    "ReadingAssignment",
+    foreign_keys="ReadingAssignment.assigned_by",
+    )
+
+
+    student_assignments = relationship(
+        "StudentAssignment",
+        foreign_keys="StudentAssignment.student_id",
+    )

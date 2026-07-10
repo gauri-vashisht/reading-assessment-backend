@@ -18,6 +18,12 @@ class Classroom(Base, UUIDMixin, TimestampMixin):
         ),
     )
 
+    reading_assignments = relationship(
+    "ReadingAssignment",
+    back_populates="classroom",
+    cascade="all, delete-orphan",
+    )
+
     school_id: Mapped[str] = mapped_column(
         ForeignKey("schools.id", ondelete="CASCADE"),
         nullable=False,

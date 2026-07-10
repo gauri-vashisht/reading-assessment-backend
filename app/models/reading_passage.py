@@ -59,3 +59,9 @@ class ReadingPassage(Base, TimestampMixin):
     Integer,
     nullable=False,
     )
+
+    assignments = relationship(
+    "ReadingAssignment",
+    back_populates="passage",
+    cascade="all, delete-orphan",
+    )
