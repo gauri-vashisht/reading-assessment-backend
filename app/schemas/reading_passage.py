@@ -12,6 +12,7 @@ class ReadingPassageBase(BaseModel):
     grade: int = Field(..., ge=3, le=8)
     difficulty: ReadingDifficulty
     is_active: bool = True
+    expected_reading_time_minutes: int = Field(..., gt=0)
 
 
 class ReadingPassageCreate(ReadingPassageBase):
@@ -23,7 +24,6 @@ class ReadingPassageUpdate(BaseModel):
     passage: str | None = None
     grade: int | None = Field(default=None, ge=3, le=8)
     difficulty: ReadingDifficulty | None = None
-    expected_reading_time_minutes: int | None = Field(default=None, gt=0)
     is_active: bool | None = None
 
 
