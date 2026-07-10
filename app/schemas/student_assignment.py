@@ -18,8 +18,3 @@ class StudentAssignmentResponse(BaseModel):
 
     created_at: datetime
     updated_at: datetime
-
-
-class StudentAssignmentUpdate(BaseModel):
-    status: AssignmentStatus | None = None
-    completed_at: datetime | None = None

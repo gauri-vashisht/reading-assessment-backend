@@ -12,5 +12,4 @@ from .reading_assignment import (
 
 from .student_assignment import (
     StudentAssignmentResponse,
-    StudentAssignmentUpdate,
 )

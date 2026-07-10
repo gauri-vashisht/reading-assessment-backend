@@ -1,1 +1,1 @@
-from app.routers.reading_passage import router as reading_passage_router
+from app.api.reading_passage import router as reading_passage_router
