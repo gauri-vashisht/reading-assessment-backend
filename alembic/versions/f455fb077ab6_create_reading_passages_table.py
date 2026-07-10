@@ -1,8 +1,8 @@
 """create reading passages table
 
-Revision ID: 9070b4da9c27
+Revision ID: f455fb077ab6
 Revises: 10d6f2a2de07
-Create Date: 2026-07-10 12:23:59.840509
+Create Date: 2026-07-10 16:55:21.912063
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9070b4da9c27'
+revision: str = 'f455fb077ab6'
 down_revision: Union[str, Sequence[str], None] = '10d6f2a2de07'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,12 +26,11 @@ def upgrade() -> None:
     sa.Column('title', sa.String(length=255), nullable=False),
     sa.Column('passage', sa.Text(), nullable=False),
     sa.Column('grade', sa.Integer(), nullable=False),
-    sa.Column('subject', sa.String(length=100), nullable=False),
     sa.Column('difficulty', sa.Enum('EASY', 'MEDIUM', 'HARD', name='reading_difficulty_enum'), nullable=False),
-    sa.Column('language', sa.String(length=50), nullable=False),
-    sa.Column('expected_reading_time', sa.Integer(), nullable=False),
+    sa.Column('expected_reading_time_minutes', sa.Integer(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_by', sa.UUID(), nullable=False),
+    sa.Column('word_count', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),

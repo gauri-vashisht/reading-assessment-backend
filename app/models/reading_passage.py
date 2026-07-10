@@ -28,20 +28,12 @@ class ReadingPassage(Base, TimestampMixin):
 
     grade = Column(Integer, nullable=False)
 
-    subject = Column(String(100), nullable=False)
-
     difficulty = Column(
         Enum(ReadingDifficulty, name="reading_difficulty_enum"),
         nullable=False,
     )
 
-    language = Column(
-        String(50),
-        nullable=False,
-        default="English",
-    )
-
-    expected_reading_time = Column(
+    expected_reading_time_minutes = Column(
         Integer,
         nullable=False,
     )
@@ -61,4 +53,9 @@ class ReadingPassage(Base, TimestampMixin):
     creator = relationship(
         "User",
         back_populates="reading_passages",
+    )
+
+    word_count = Column(
+    Integer,
+    nullable=False,
     )

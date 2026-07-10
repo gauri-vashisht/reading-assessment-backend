@@ -21,8 +21,14 @@ class ReadingPassageService:
         data: ReadingPassageCreate,
         current_user: User,
     ):
+        passage_data = data.model_dump()
+
+        passage_data["word_count"] = len(
+            passage_data["passage"].split()
+        )
+
         passage = ReadingPassage(
-            **data.model_dump(),
+            **passage_data,
             created_by=current_user.id,
         )
 
@@ -45,6 +51,10 @@ class ReadingPassageService:
             return None
 
         update_data = data.model_dump(exclude_unset=True)
+        if "passage" in update_data:
+            update_data["word_count"] = len(
+                update_data["passage"].split()
+        )
 
         for key, value in update_data.items():
             setattr(passage, key, value)
