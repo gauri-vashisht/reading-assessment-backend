@@ -1,0 +1,1 @@
+from app.repositories.reading_passage_repository import ReadingPassageRepository

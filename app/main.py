@@ -18,7 +18,7 @@ from app.api.teacher_profiles import (
 from app.api.student_profiles import (
     router as student_profile_router,
 )
-
+from app.routers.reading_passage import router as reading_passage_router
 
 
 @asynccontextmanager
@@ -48,6 +48,9 @@ app.include_router(
 app.include_router(
     student_profile_router,
 )
+app.include_router(reading_passage_router)
+
+
 @app.get("/", tags=["Root"])
 def root():
     return {

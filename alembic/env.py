@@ -5,6 +5,8 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.config import settings
 from app.database.base import Base
+from app.models import *
+from app.models.reading_passage import ReadingPassage
 
 # Import all SQLAlchemy models
 import app.database.models

@@ -3,6 +3,7 @@ import uuid
 from sqlalchemy import Boolean
 from sqlalchemy import Enum
 from sqlalchemy import String
+from sqlalchemy.orm import relationship
 
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -69,3 +70,10 @@ class User(Base, TimestampMixin):
     back_populates="user",
     uselist=False,
     )
+
+    reading_passages = relationship(
+    "ReadingPassage",
+    back_populates="creator",
+    cascade="all, delete-orphan",
+    )
+
