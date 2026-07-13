@@ -25,12 +25,14 @@ class StudentAssignment(Base):
         UUID(as_uuid=True),
         ForeignKey("reading_assignments.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
 
     student_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
 
     status: Mapped[AssignmentStatus] = mapped_column(
@@ -41,6 +43,7 @@ class StudentAssignment(Base):
         ),
         default=AssignmentStatus.PENDING,
         nullable=False,
+        index=True,
     )
 
     completed_at: Mapped[datetime | None] = mapped_column(

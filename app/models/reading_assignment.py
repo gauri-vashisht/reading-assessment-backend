@@ -24,14 +24,14 @@ class ReadingAssignment(Base):
         UUID(as_uuid=True),
         ForeignKey("reading_passages.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
-
-    
 
     classroom_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("classrooms.id", ondelete="CASCADE"),
         nullable=True,
+        index=True,
     )
 
     assigned_by: Mapped[uuid.UUID] = mapped_column(
@@ -84,3 +84,12 @@ class ReadingAssignment(Base):
         back_populates="assignment",
         cascade="all, delete-orphan",
     )
+
+    audio_recordings = relationship(
+        "AudioRecording",
+        back_populates="assignment",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+    

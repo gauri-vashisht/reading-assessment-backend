@@ -124,3 +124,10 @@ class StudentProfile(Base, UUIDMixin, TimestampMixin):
         "Classroom",
         back_populates="students",
     )
+
+    audio_recordings = relationship(
+        "AudioRecording",
+        back_populates="student",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )

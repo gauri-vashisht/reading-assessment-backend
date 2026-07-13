@@ -8,4 +8,5 @@ from .student_profile import StudentProfile
 from app.models.reading_passage import ReadingPassage
 
 from .reading_assignment import ReadingAssignment
+from app.models.audio_recording import AudioRecording
 from .student_assignment import StudentAssignment
