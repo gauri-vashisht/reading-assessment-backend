@@ -13,6 +13,7 @@ from app.models.assessment_result import (
     AssessmentStatus,
 )
 
+
 from app.repositories.assessment_result_repository import (
     AssessmentResultRepository,
 )
@@ -220,4 +221,6 @@ class AssessmentService:
             assessment,
         )
 
-        return assessment
+    
+
+        return assessment,comparison

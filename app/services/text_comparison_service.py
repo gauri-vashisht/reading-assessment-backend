@@ -52,11 +52,21 @@ class TextComparisonService:
 
         extra_words = []
 
+        word_results = []
+
         for tag, i1, i2, j1, j2 in matcher.get_opcodes():
 
             if tag == "equal":
 
                 correct += i2 - i1
+
+                for word in expected[i1:i2]:
+                    word_results.append(
+                        self.build_word_result(
+                            word,
+                            "correct",
+                        )
+                    )
 
             elif tag == "replace":
 
@@ -68,6 +78,13 @@ class TextComparisonService:
                 incorrect_words.extend(
                     expected[i1:i2]
                 )
+                for word in expected[i1:i2]:
+                    word_results.append(
+                        self.build_word_result(
+                            word,
+                            "incorrect",
+                        )
+                    )
 
             elif tag == "delete":
 
@@ -76,6 +93,13 @@ class TextComparisonService:
                 skipped_words.extend(
                     expected[i1:i2]
                 )
+                for word in expected[i1:i2]:
+                    word_results.append(
+                        self.build_word_result(
+                            word,
+                            "skipped",
+                        )
+                    )
 
             elif tag == "insert":
 
@@ -105,7 +129,20 @@ class TextComparisonService:
 
             "extra_word_list":
                 extra_words,
+            
+            "word_results": word_results,
 
+        }
+    
+    def build_word_result(
+        self,
+        word: str,
+        status: str,
+    ):
+
+        return {
+            "word": word,
+            "status": status,
         }
 
 

@@ -54,8 +54,13 @@ class AssessmentResultUpdate(BaseModel):
     status: AssessmentStatus | None = None
 
 
-class AssessmentResultResponse(AssessmentResultBase):
-    model_config = ConfigDict(from_attributes=True)
+class AssessmentResultResponse(
+    AssessmentResultBase,
+):
+
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
 
     id: UUID
 
@@ -69,8 +74,10 @@ class AssessmentResultResponse(AssessmentResultBase):
 
     updated_at: datetime
 
-    incorrect_word_list: list[str] = []
+    reading_level: str
 
-    skipped_word_list: list[str] = []
+    teacher_feedback: str
 
-    extra_word_list: list[str] = []
+    student_feedback: str
+
+    summary: str
