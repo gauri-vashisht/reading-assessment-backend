@@ -24,6 +24,7 @@ from app.api.audio_recordings import (
     router as audio_recording_router,
 )
 from app.core.minio import ensure_bucket_exists
+from app.api.assessments import router as assessment_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,7 +40,9 @@ app = FastAPI(
     version=settings.APP_VERSION,
     lifespan=lifespan,
 )
-
+app.include_router(
+    assessment_router
+)
 app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(school_router)

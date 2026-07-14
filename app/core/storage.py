@@ -20,6 +20,42 @@ from minio.error import S3Error
 
 class StorageService:
 
+    def download_audio_to_temp(
+        self,
+        *,
+        bucket_name: str,
+        storage_key: str,
+    ) -> str:
+
+        suffix = Path(storage_key).suffix
+
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=suffix,
+        ) as temp_file:
+
+            temp_path = temp_file.name
+
+        try:
+
+            minio_client.fget_object(
+                bucket_name=bucket_name,
+                object_name=storage_key,
+                file_path=temp_path,
+            )
+
+            return temp_path
+
+        except S3Error as exc:
+
+            Path(temp_path).unlink(
+                missing_ok=True,
+            )
+
+            raise HTTPException(
+                status_code=500,
+                detail=str(exc),
+            )
     def upload_audio(
         self,
         *,

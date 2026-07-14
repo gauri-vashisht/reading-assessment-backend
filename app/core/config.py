@@ -45,6 +45,8 @@ class Settings(BaseSettings):
         env_file=".env",
         extra="ignore"
     )
+    WHISPER_MODEL: str = "base"
+  
 
 
 settings = Settings()

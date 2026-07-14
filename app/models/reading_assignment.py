@@ -78,7 +78,6 @@ class ReadingAssignment(Base):
         foreign_keys=[assigned_by],
     )
 
-
     student_assignments = relationship(
         "StudentAssignment",
         back_populates="assignment",

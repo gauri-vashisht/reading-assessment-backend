@@ -7,3 +7,6 @@ from .reading_assignment_repository import (
 from .student_assignment_repository import (
     StudentAssignmentRepository,
 )
+
+from .assessment_result_repository import AssessmentResultRepository
+

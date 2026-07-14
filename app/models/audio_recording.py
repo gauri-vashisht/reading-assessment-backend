@@ -96,3 +96,10 @@ class AudioRecording(
         "StudentProfile",
         back_populates="audio_recordings",
     )
+
+    assessment_result = relationship(
+        "AssessmentResult",
+        back_populates="recording",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
