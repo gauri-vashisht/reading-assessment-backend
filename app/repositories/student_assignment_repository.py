@@ -4,7 +4,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.student_assignment import StudentAssignment
+from sqlalchemy.orm import joinedload
 
+
+from app.models.reading_assignment import ReadingAssigment
 
 class StudentAssignmentRepository:
 
@@ -67,3 +70,14 @@ class StudentAssignmentRepository:
     
     def commit(self):
         self.db.commit()
+
+    def get_by_student(self, student_id):
+        return (
+            self.db.query(StudentAssignment)
+            .options(
+                joinedload(StudentAssignment.assignment)
+                .joinedload(ReadingAssignment.passage)
+            )
+            .filter(StudentAssignment.student_id == student_id)
+            .all()
+        )
