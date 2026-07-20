@@ -7,7 +7,7 @@ from app.models.student_assignment import StudentAssignment
 from sqlalchemy.orm import joinedload
 
 
-from app.models.reading_assignment import ReadingAssigment
+from app.models.reading_assignment import ReadingAssignment
 
 class StudentAssignmentRepository:
 
