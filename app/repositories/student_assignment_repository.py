@@ -49,12 +49,12 @@ class StudentAssignmentRepository:
 
     def get_by_id(
         self,
-        assignment_id: UUID,
+        student_assignment_id: UUID,
     ) -> StudentAssignment | None:
 
         return self.db.scalar(
             select(StudentAssignment).where(
-                StudentAssignment.id == assignment_id
+                StudentAssignment.id == student_assignment_id
             )
         )
 

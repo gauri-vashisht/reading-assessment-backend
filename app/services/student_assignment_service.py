@@ -74,12 +74,12 @@ class StudentAssignmentService:
 
     def mark_completed(
         self,
-        assignment_id: UUID,
+        student_assignment_id: UUID,
         current_user: User,
     ) -> StudentAssignmentResponse:
 
         assignment = self.repository.get_by_id(
-            assignment_id
+            student_assignment_id
         )
 
         if assignment is None:

@@ -65,17 +65,17 @@ def get_completed_assignments(
 
 
 @router.patch(
-    "/{assignment_id}/complete",
+    "/{student_assignment_id}/complete",
     response_model=StudentAssignmentResponse,
 )
 def mark_assignment_completed(
-    assignment_id: UUID,
+    student_assignment_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     service = StudentAssignmentService(db)
 
     return service.mark_completed(
-        assignment_id,
+        student_assignment_id,
         current_user,
     )
