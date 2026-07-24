@@ -24,7 +24,6 @@ class ReadingPassageRepository:
                 ReadingPassage.is_active == is_active
             )
         query = query.order_by(
-            ReadingPassage.grade,
             ReadingPassage.title,
         )
         return (

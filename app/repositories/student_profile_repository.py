@@ -19,6 +19,7 @@ class StudentProfileRepository(
     ):
         stmt = (
             select(StudentProfile)
+            .join(User, StudentProfile.user_id == User.id)
             .options(
                 joinedload(StudentProfile.user)
             )
@@ -30,7 +31,7 @@ class StudentProfileRepository(
             )
 
         stmt = stmt.order_by(
-                User.full_name
+            User.full_name
         )
 
         return db.scalars(stmt).all()
