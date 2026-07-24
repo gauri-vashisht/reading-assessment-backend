@@ -25,6 +25,25 @@ class ClassroomRepository(BaseRepository[Classroom]):
 
         return db.scalar(stmt)
 
+    def get_all(
+        self,
+        db: Session,
+        is_active: bool | None = None,
+    ):
+        stmt = select(Classroom)
+
+        if is_active is not None:
+            stmt = stmt.where(
+                Classroom.is_active == is_active
+            )
+
+        stmt = stmt.order_by(
+            Classroom.grade,
+            Classroom.section,
+        )
+
+        return db.scalars(stmt).all()
+
     def update(
         self,
         db: Session,

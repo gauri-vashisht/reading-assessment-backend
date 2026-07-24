@@ -12,6 +12,7 @@ from app.repositories.user_repository import user_repository
 from app.schemas.student_profile import (
     StudentProfileCreate,
     StudentProfileUpdate,
+    StudentSummaryResponse
 )
 
 
@@ -99,8 +100,24 @@ class StudentProfileService:
     def get_students(
         self,
         db: Session,
+        classroom_id: UUID | None = None,
+        summary: bool = False,
     ):
-        return student_profile_repository.get_all(db)
+        students = student_profile_repository.get_all(
+            db,
+            classroom_id=classroom_id,
+        )
+
+        if summary:
+            return [
+                StudentSummaryResponse(
+                    id=student.user.id,
+                    full_name=student.user.full_name,
+                )
+                for student in students
+            ]
+
+        return students
 
     def get_student(
         self,

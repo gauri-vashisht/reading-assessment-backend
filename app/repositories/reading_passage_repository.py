@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy.orm import Session
-
+from sqlalchemy import select
 from app.models.reading_passage import ReadingPassage
 
 
@@ -16,11 +16,19 @@ class ReadingPassageRepository:
         self.db.refresh(passage)
         return passage
 
-    def get_all(self):
+    def get_all(self, is_active: bool | None = None,):
+        query = select(ReadingPassage)
+
+        if is_active is not None:
+            query = query.where(
+                ReadingPassage.is_active == is_active
+            )
+        query = query.order_by(
+            ReadingPassage.grade,
+            ReadingPassage.title,
+        )
         return (
-            self.db.query(ReadingPassage)
-            .order_by(ReadingPassage.created_at.desc())
-            .all()
+            self.db.scalars(query).all()
         )
 
     def get_by_id(self, passage_id: UUID):

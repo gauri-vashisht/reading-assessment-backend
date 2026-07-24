@@ -1,13 +1,10 @@
 from __future__ import annotations
-
 import uuid
 from datetime import datetime
-
 from sqlalchemy import DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
-
 from app.database.base import Base
 from app.enums.assignment_status import AssignmentStatus
 
@@ -72,4 +69,5 @@ class StudentAssignment(Base):
     student = relationship(
         "User",
         foreign_keys=[student_id],
+        back_populates="student_assignments",
     )

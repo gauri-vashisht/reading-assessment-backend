@@ -60,3 +60,12 @@ class ClassroomResponse(ClassroomBase):
     model_config = ConfigDict(
         from_attributes=True,
     )
+
+class ClassroomSummaryResponse(BaseModel):
+    id: UUID
+    grade: int
+    section: str
+
+    model_config = {
+        "from_attributes": True
+    }

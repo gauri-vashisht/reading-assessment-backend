@@ -2,6 +2,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from app.enums.assignment_status import AssignmentStatus
 from app.models.student_assignment import StudentAssignment
+from app.models.student_profile import StudentProfile
 
 import os
 from uuid import UUID
@@ -211,23 +212,27 @@ class AssessmentService:
 
         assessment.status = AssessmentStatus.COMPLETED
         
-
         self.assessment_repo.update(
             self.db,
             assessment,
         )
 
-        
-
+        student_profile = (
+            self.db.query(StudentProfile)
+            .filter(
+                StudentProfile.id == recording.student_profile_id
+            )
+            .first()
+        )
         student_assignment = (
             self.db.query(StudentAssignment)
             .filter(
                 StudentAssignment.assignment_id == recording.assignment_id,
-                StudentAssignment.student_profile_id == recording.student_profile_id,
+                StudentAssignment.student_id == student_profile.user_id,
             )
             .first()
         )
-
+      
         if student_assignment:
             student_assignment.status = AssignmentStatus.COMPLETED
             student_assignment.completed_at = datetime.now(timezone.utc)

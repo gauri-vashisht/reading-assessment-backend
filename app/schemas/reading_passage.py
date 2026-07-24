@@ -35,3 +35,12 @@ class ReadingPassageResponse(ReadingPassageBase):
     created_at: datetime
     updated_at: datetime
     word_count: int
+
+class ReadingPassageSummaryResponse(BaseModel):
+    id: UUID
+    title: str
+    grade: int
+
+    model_config = {
+        "from_attributes": True
+    }

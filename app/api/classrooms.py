@@ -1,13 +1,14 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
-
+from fastapi import Query
 from app.dependencies.auth import get_current_user, require_admin
 from app.dependencies.database import DBSession
 from app.schemas.classroom import (
     ClassroomCreate,
     ClassroomResponse,
     ClassroomUpdate,
+    ClassroomSummaryResponse
 )
 from app.services.classroom_service import classroom_service
 
@@ -22,9 +23,21 @@ def create_classroom(classroom: ClassroomCreate, db: DBSession, user=Depends(req
     return classroom_service.create_classroom(db, classroom)
 
 
-@router.get("", response_model=list[ClassroomResponse])
-def get_classrooms(db: DBSession, user=Depends(get_current_user)):
-    return classroom_service.get_classrooms(db)
+@router.get(
+    "",
+    response_model=list[ClassroomSummaryResponse] | list[ClassroomResponse],
+)
+def get_classrooms(
+    db: DBSession,
+    user=Depends(get_current_user),
+    is_active: bool | None = Query(None),
+    summary: bool = Query(False),
+):
+    return classroom_service.get_classrooms(
+        db,
+        is_active=is_active,
+        summary=summary,
+    )
 
 
 @router.get("/{classroom_id}", response_model=ClassroomResponse)

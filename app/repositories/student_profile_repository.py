@@ -1,6 +1,6 @@
 from sqlalchemy import select
-from sqlalchemy.orm import Session
-
+from sqlalchemy.orm import Session, joinedload
+from app.models.user import User
 from app.models.student_profile import StudentProfile
 from app.repositories.base_repository import BaseRepository
 
@@ -11,6 +11,29 @@ class StudentProfileRepository(
 
     def __init__(self):
         super().__init__(StudentProfile)
+
+    def get_all(
+        self,
+        db: Session,
+        classroom_id=None,
+    ):
+        stmt = (
+            select(StudentProfile)
+            .options(
+                joinedload(StudentProfile.user)
+            )
+        )
+
+        if classroom_id is not None:
+            stmt = stmt.where(
+                StudentProfile.classroom_id == classroom_id
+            )
+
+        stmt = stmt.order_by(
+                User.full_name
+        )
+
+        return db.scalars(stmt).all()
 
     def get_by_user(
         self,
@@ -45,6 +68,17 @@ class StudentProfileRepository(
         stmt = select(StudentProfile).where(
             StudentProfile.classroom_id == classroom_id,
             StudentProfile.roll_number == roll_number,
+        )
+
+        return db.scalar(stmt)
+
+    def get_by_id(
+        self,
+        db: Session,
+        profile_id,
+    ):
+        stmt = select(StudentProfile).where(
+            StudentProfile.id == profile_id
         )
 
         return db.scalar(stmt)

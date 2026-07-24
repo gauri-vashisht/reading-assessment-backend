@@ -79,11 +79,16 @@ class StudentProfileUpdate(BaseModel):
     )
 
     is_active: bool | None = None
-
-
 class StudentProfileResponse(StudentProfileBase):
     id: UUID
 
     model_config = ConfigDict(
         from_attributes=True,
     )
+class StudentSummaryResponse(BaseModel):
+    id: UUID          # User.id
+    full_name: str
+
+    model_config = {
+        "from_attributes": True
+    }

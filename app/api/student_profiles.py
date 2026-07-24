@@ -1,6 +1,9 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
+from app.schemas.student_profile import (
+    StudentSummaryResponse,
+)
 
 from app.dependencies.auth import (
     get_current_user,
@@ -40,13 +43,19 @@ def create_student(
 
 @router.get(
     "",
-    response_model=list[StudentProfileResponse],
+    response_model=list[StudentSummaryResponse] | list[StudentProfileResponse],
 )
 def get_students(
     db: DBSession,
     user=Depends(get_current_user),
+    classroom_id: UUID | None = Query(None),
+    summary: bool = Query(False),
 ):
-    return student_profile_service.get_students(db)
+    return student_profile_service.get_students(
+        db,
+        classroom_id=classroom_id,
+        summary=summary,
+    )
 
 
 @router.get(

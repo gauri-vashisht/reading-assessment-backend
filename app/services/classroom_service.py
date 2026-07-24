@@ -7,7 +7,7 @@ from app.models.classroom import Classroom
 from app.repositories.academic_year_repository import academic_year_repository
 from app.repositories.classroom_repository import classroom_repository
 from app.repositories.school_repository import school_repository
-from app.schemas.classroom import ClassroomCreate, ClassroomUpdate
+from app.schemas.classroom import (ClassroomCreate, ClassroomUpdate, ClassroomSummaryResponse)
 
 
 class ClassroomService:
@@ -40,17 +40,26 @@ class ClassroomService:
     def get_classrooms(self, db):
         return classroom_repository.get_all(db)
 
-    def get_classroom(self, db, classroom_id: UUID):
-
-        classroom = classroom_repository.get_by_id(
+    def get_classrooms(
+        self,
+        db,
+        is_active: bool | None = None,
+        summary: bool = False,
+    ):
+        classrooms = classroom_repository.get_all(
             db,
-            classroom_id,
+            is_active=is_active,
         )
 
-        if classroom is None:
-            raise HTTPException(404, "Classroom not found.")
+        if summary:
+            return [
+                ClassroomSummaryResponse.model_validate(
+                    classroom
+                )
+                for classroom in classrooms
+            ]
 
-        return classroom
+        return classrooms
 
     def update_classroom(
         self,

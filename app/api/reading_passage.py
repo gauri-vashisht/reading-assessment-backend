@@ -1,8 +1,6 @@
 from uuid import UUID
-
-from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.database.session import get_db
 from app.dependencies.auth import (
     get_current_user,
@@ -15,12 +13,12 @@ from app.schemas.reading_passage import (
     ReadingPassageUpdate,
 )
 from app.services.reading_passage_service import ReadingPassageService
+from app.schemas.reading_passage import ReadingPassageSummaryResponse
 
 router = APIRouter(
     prefix="/reading-passages",
     tags=["Reading Passages"],
 )
-
 
 @router.post(
     "",
@@ -35,18 +33,22 @@ def create_reading_passage(
     service = ReadingPassageService(db)
     return service.create(passage, current_user)
 
-
 @router.get(
     "",
-    response_model=list[ReadingPassageResponse],
+    response_model=list[ReadingPassageSummaryResponse] | list[ReadingPassageResponse],
 )
 def get_all_reading_passages(
+    is_active: bool | None = Query(None),
+    summary: bool = Query(False),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     service = ReadingPassageService(db)
-    return service.get_all()
 
+    return service.get_all(
+        is_active=is_active,
+        summary=summary,
+    )
 
 @router.get(
     "/{passage_id}",

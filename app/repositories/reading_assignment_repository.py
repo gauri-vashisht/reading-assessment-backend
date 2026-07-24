@@ -1,11 +1,10 @@
 from uuid import UUID
-
 from sqlalchemy import func, select
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import Session
-
 from app.models.reading_assignment import ReadingAssignment
-
-
+from app.models.student_assignment import StudentAssignment
+from app.models.user import User
 class ReadingAssignmentRepository:
 
     def __init__(self, db: Session):
@@ -27,11 +26,23 @@ class ReadingAssignmentRepository:
         assignment_id: UUID,
     ) -> ReadingAssignment | None:
 
-        return self.db.scalar(
-            select(ReadingAssignment).where(
+        result = self.db.execute(
+            select(ReadingAssignment)
+            .options(
+                joinedload(ReadingAssignment.passage),
+                joinedload(ReadingAssignment.classroom),
+                joinedload(
+                    ReadingAssignment.student_assignments
+                ).joinedload(
+                    StudentAssignment.student
+                ),
+            )
+            .where(
                 ReadingAssignment.id == assignment_id
             )
         )
+
+        return result.unique().scalar_one_or_none()
 
     def get_all(
         self,
@@ -45,17 +56,29 @@ class ReadingAssignmentRepository:
             )
         )
 
-        assignments = (
-            self.db.scalars(
-                select(ReadingAssignment)
-                .offset(skip)
-                .limit(limit)
-                .order_by(
-                    ReadingAssignment.created_at.desc()
-                )
+        result = self.db.execute(
+            select(ReadingAssignment)
+            .options(
+                joinedload(
+                    ReadingAssignment.passage
+                ),
+                joinedload(
+                    ReadingAssignment.classroom
+                ),
+                joinedload(
+                    ReadingAssignment.student_assignments
+                ).joinedload(
+                    StudentAssignment.student
+                ),
             )
-            .all()
+            .order_by(
+                ReadingAssignment.created_at.desc()
+            )
+            .offset(skip)
+            .limit(limit)
         )
+
+        assignments = result.unique().scalars().all()
 
         return assignments, total
 
